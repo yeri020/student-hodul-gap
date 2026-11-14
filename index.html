@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06120b">
+  <title>호들갑 챔피언십 — 32강</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #06120b;
+      --panel: #0a1c11;
+      --panel-hi: #102719;
+      --line: #28523a;
+      --phosphor: #8cff9b;
+      --bright: #c3ffbd;
+      --dim: #6ca878;
+      --amber: #f3cb70;
+      --shadow: 0 0 22px #57ff7820, inset 0 0 28px #51ff7510;
+      font-family: "Cascadia Mono", "D2Coding", "Malgun Gothic", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 28px 18px 40px;
+      color: var(--phosphor);
+      background:
+        radial-gradient(ellipse at 50% 0%, #17351f 0, transparent 48%),
+        repeating-linear-gradient(0deg, #020904 0 2px, #07150b 2px 4px);
+      text-shadow: 0 0 8px #8cff9b48;
+    }
+
+    body::before {
+      position: fixed;
+      z-index: 5;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background: repeating-linear-gradient(0deg, #0000 0 3px, #00000028 4px);
+      opacity: .48;
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      width: min(940px, 100%);
+      margin: 0 auto;
+      padding: clamp(20px, 5vw, 42px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(145deg, #0b1c11f5, #07140bf5);
+      box-shadow: var(--shadow), 0 22px 80px #0009;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell::after {
+      position: absolute;
+      inset: 0;
+      border: 1px solid #8cff9b12;
+      border-radius: inherit;
+      content: "";
+      pointer-events: none;
+    }
+
+    header { text-align: center; }
+
+    .eyebrow {
+      margin: 0 0 11px;
+      color: var(--dim);
+      font-size: .72rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--bright);
+      font-size: clamp(1.7rem, 5vw, 3.2rem);
+      line-height: 1.15;
+      letter-spacing: -.06em;
+      text-shadow: 0 0 22px #8cff9b70;
+    }
+
+    .subtitle {
+      margin: 13px 0 0;
+      color: #a4c9a7;
+      font-size: clamp(.8rem, 2vw, .98rem);
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin: 34px 0 11px;
+      color: var(--dim);
+      font-size: .78rem;
+    }
+
+    .round-label { color: var(--bright); }
+
+    .progress-track {
+      height: 7px;
+      overflow: hidden;
+      border: 1px solid #244832;
+      border-radius: 99px;
+      background: #020904;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--phosphor);
+      box-shadow: 0 0 12px var(--phosphor);
+      transition: width .35s ease;
+    }
+
+    .prompt {
+      margin: 30px 0 18px;
+      color: #b7d8b8;
+      text-align: center;
+      font-size: .85rem;
+    }
+
+    .intro-card {
+      margin: 34px auto 0;
+      padding: clamp(24px, 5vw, 42px);
+      border: 1px solid #315d3d;
+      border-radius: 14px;
+      background: radial-gradient(ellipse at center, #15351e, #09170e 72%);
+      text-align: center;
+      box-shadow: inset 0 0 30px #84ff9810;
+    }
+
+    .intro-mark {
+      margin: 0 0 15px;
+      color: var(--amber);
+      font-size: .76rem;
+      letter-spacing: .2em;
+    }
+
+    .intro-card h2 {
+      margin: 0;
+      color: var(--bright);
+      font-size: clamp(1.35rem, 4vw, 2rem);
+    }
+
+    .intro-copy {
+      max-width: 470px;
+      margin: 14px auto 25px;
+      color: #a5c3a7;
+      font-family: "Malgun Gothic", sans-serif;
+      font-size: .92rem;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+
+    .start-button {
+      padding: 14px 26px;
+      border: 1px solid var(--phosphor);
+      border-radius: 8px;
+      color: #07140b;
+      background: var(--phosphor);
+      box-shadow: 0 0 20px #8cff9b48;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .16s, box-shadow .16s, background .16s;
+    }
+
+    .start-button:hover, .start-button:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+      background: var(--bright);
+      box-shadow: 0 0 28px #8cff9b72;
+    }
+
+    .versus {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: clamp(10px, 3vw, 22px);
+      align-items: stretch;
+    }
+
+    .choice {
+      min-height: 205px;
+      padding: clamp(18px, 4vw, 30px);
+      border: 1px solid #315d3d;
+      border-radius: 14px;
+      color: var(--bright);
+      text-align: left;
+      background: linear-gradient(150deg, #12291a, #09170e);
+      box-shadow: inset 0 0 24px #84ff9810;
+      cursor: pointer;
+      transition: border-color .16s, transform .16s, background .16s, box-shadow .16s;
+    }
+
+    .choice:hover, .choice:focus-visible {
+      outline: none;
+      transform: translateY(-3px);
+      border-color: var(--phosphor);
+      background: linear-gradient(150deg, #1a3822, #0b1c11);
+      box-shadow: 0 0 24px #8cff9b24, inset 0 0 25px #84ff9818;
+    }
+
+    .choice:active { transform: translateY(0); }
+
+    .choice-index {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--dim);
+      font-size: .72rem;
+      letter-spacing: .15em;
+    }
+
+    .choice-title {
+      display: block;
+      margin-bottom: 11px;
+      font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .choice-desc {
+      display: block;
+      color: #a5c3a7;
+      font-family: "Malgun Gothic", sans-serif;
+      font-size: .9rem;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    .vs {
+      align-self: center;
+      color: var(--amber);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-shadow: 0 0 10px #f3cb7060;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 23px;
+    }
+
+    .reset {
+      padding: 10px 15px;
+      border: 1px solid #31523a;
+      border-radius: 8px;
+      color: var(--dim);
+      background: #08150c;
+      cursor: pointer;
+      font-size: .78rem;
+      transition: color .15s, border-color .15s;
+    }
+
+    .reset:hover, .reset:focus-visible {
+      color: var(--bright);
+      border-color: var(--phosphor);
+      outline: none;
+    }
+
+    .champion {
+      margin: 32px auto 0;
+      padding: clamp(22px, 5vw, 38px);
+      border: 1px solid var(--phosphor);
+      border-radius: 16px;
+      background: radial-gradient(ellipse at center, #183d20, #09170e 70%);
+      box-shadow: 0 0 35px #8cff9b28, inset 0 0 35px #8cff9b12;
+      text-align: center;
+    }
+
+    .champion-crown {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--amber);
+      font-size: 1.9rem;
+      text-shadow: 0 0 15px #f3cb7066;
+    }
+
+    .champion h2 {
+      margin: 0 0 18px;
+      color: var(--bright);
+      font-size: clamp(1.4rem, 4vw, 2rem);
+    }
+
+    .champion .choice-title { font-size: 1.35rem; }
+
+    .hidden { display: none; }
+
+    footer {
+      margin-top: 24px;
+      color: #557a5e;
+      text-align: center;
+      font-size: .68rem;
+      letter-spacing: .1em;
+    }
+
+    @media (max-width: 620px) {
+      body { padding: 12px 10px 24px; }
+      .shell { padding: 23px 16px; border-radius: 15px; }
+      .status-row { margin-top: 27px; }
+      .versus { grid-template-columns: 1fr; gap: 12px; }
+      .choice { min-height: auto; padding: 19px; }
+      .choice-index { margin-bottom: 9px; }
+      .choice-title { margin-bottom: 7px; }
+      .vs { text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">P31 PHOSPHOR · STUDENT EDITION</p>
+      <h1>호들갑 챔피언십</h1>
+      <p class="subtitle">둘 중 더 호들갑스러운 상황을 골라주세요</p>
+    </header>
+
+    <section id="intro" class="intro-card">
+      <p class="intro-mark">32 ENTRIES · SINGLE ELIMINATION</p>
+      <h2>최고의 호들갑을 가려볼까요?</h2>
+      <p class="intro-copy">32개 상황을 하나씩 비교하며 더 공감되는 쪽을 선택하세요.<br>총 31번의 선택 끝에 오늘의 호들갑 챔피언이 탄생합니다.</p>
+      <button id="startButton" class="start-button" type="button">대전 시작하기</button>
+    </section>
+
+    <section id="game" class="hidden" aria-live="polite">
+      <div class="status-row">
+        <span id="roundLabel" class="round-label">32강</span>
+        <span id="matchLabel">1 / 31 경기</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="토너먼트 진행률" aria-valuemin="0" aria-valuemax="31" aria-valuenow="0">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <p class="prompt">더 공감되고 더 호들갑인 쪽을 클릭!</p>
+      <div class="versus">
+        <button id="choiceA" class="choice" type="button"></button>
+        <span class="vs" aria-hidden="true">VS</span>
+        <button id="choiceB" class="choice" type="button"></button>
+      </div>
+      <div class="controls">
+        <button id="resetButton" class="reset" type="button">↻ 처음부터 다시</button>
+      </div>
+    </section>
+
+    <section id="winner" class="champion hidden" aria-live="polite">
+      <span class="champion-crown" aria-hidden="true">★</span>
+      <h2>오늘의 호들갑 챔피언</h2>
+      <div id="championCard"></div>
+      <div class="controls">
+        <button id="playAgainButton" class="reset" type="button">↻ 다시 토너먼트</button>
+      </div>
+    </section>
+
+    <footer>INSERT COIN · SELECT YOUR DRAMA · 32 ENTRIES</footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    const contestants = [
+      { title: "선생님의 “잠깐 남아”", desc: "아직 아무 말도 안 했는데 최근에 내가 뭘 잘못했는지 스스로 조사하기 시작함." },
+      { title: "시험 한 문제 틀림", desc: "한 문제 틀렸는데 등급 계산하고 대학까지 갔다가 취업 걱정하면서 돌아옴." },
+      { title: "시험 전날의 깨달음", desc: "평소에는 잘 살다가 시험 전날이 되면 갑자기 지난 한 달의 삶이 잘못되었다는 걸 깨달음." },
+      { title: "친구의 “할 말 있어”", desc: "친구는 아직 말을 시작하지도 않았는데 나는 이미 사과할 준비를 하고 있음." },
+      { title: "단톡방 무반응", desc: "메시지 하나 올렸는데 아무도 반응이 없으면 반에서의 내 위치에 대해 생각해봄." },
+      { title: "수행평가 오타 발견", desc: "제출하고 나서 오타 하나 발견하면 갑자기 그 오타가 내 성적을 결정할 것처럼 보임." },
+      { title: "조별과제 답장 없음", desc: "답장이 조금 늦는 것뿐인데 어느 순간 혼자 발표까지 하고 있는 미래가 보임." },
+      { title: "친구 둘의 귓속말", desc: "친구 둘이 귓속말하면 세상에 많은 이야기가 있는데 굳이 내 이야기일 거라고 생각함." },
+      { title: "급식 같이 안 먹음", desc: "친구가 오늘 다른 친구랑 밥 먹었을 뿐인데 우리 우정에 무슨 일이 있었는지 돌아봄." },
+      { title: "“이거 누가 했어?”", desc: "분명 내가 안 했는데 선생님이 범인을 찾기 시작하면 괜히 조용해짐." },
+      { title: "발표 중에 누가 웃음", desc: "다른 이유로 웃었을 가능성은 생각하지 않고 일단 내 발표 자료부터 의심함." },
+      { title: "발표 후 질문 없음", desc: "질문이 많아도 불안하고 질문이 하나도 없어도 불안함. 적당히 두 개 정도 해줘야 마음이 편함." },
+      { title: "갑작스러운 상담", desc: "선생님은 그냥 진로 이야기를 하려는데 나는 이미 부모님 호출까지 생각하고 있음." },
+      { title: "‘ㅋㅋㅋㅋ’가 ‘ㅇㅇ’이 됨", desc: "글자는 두 개인데 그 안에서 친구의 감정 변화를 찾아내려고 함." },
+      { title: "카톡 숫자 1", desc: "답장이 안 오는 시간보다 왜 답장이 안 오는지 생각한 시간이 더 길어짐." },
+      { title: "읽씹", desc: "메시지를 보낸 건 나인데 답장이 없으면 내가 보낸 문장을 내가 제일 많이 읽음." },
+      { title: "처음 듣는 시험 범위", desc: "친구가 내가 모르는 내용을 공부하고 있으면 출제 여부도 모르면서 일단 불안함." },
+      { title: "“나 공부 하나도 안 했어”", desc: "매번 속고 있으면서 이번에는 진짜일 수도 있다고 또 믿음." },
+      { title: "시험 직후 정답 확인", desc: "이미 제출해서 바꿀 수도 없는데 누구보다 빠르게 틀린 문제를 찾아냄." },
+      { title: "성적 한 번 떨어짐", desc: "한 번 성적이 떨어졌을 뿐인데 공부 방법이 아니라 자신의 지능부터 의심함." },
+      { title: "모의고사 등급표", desc: "오늘 받은 숫자 몇 개로 아직 오지도 않은 몇 년 뒤의 인생을 미리 살아봄." },
+      { title: "친구가 먼저 문제를 풂", desc: "같은 문제 하나 먼저 풀었을 뿐인데 상대는 천재가 되고 나는 기초부터 다시 해야 할 것 같음." },
+      { title: "수행평가 1점 감점", desc: "받은 99점보다 받지 못한 1점이 훨씬 크게 보이는 신기한 현상." },
+      { title: "생활기록부 한 문장", desc: "문장 하나를 읽으면서 입학사정관의 표정까지 상상함." },
+      { title: "희망학과 경쟁률", desc: "지원할지 아직 결정도 안 했는데 경쟁률부터 보고 미리 떨어져 봄." },
+      { title: "AI가 문제를 너무 잘 품", desc: "AI가 문제 하나 잘 푸는 걸 보고 갑자기 ‘그럼 나는 왜 공부하지?’라는 철학적 단계로 넘어감." },
+      { title: "친구가 모르는 AI를 쓰고 있음", desc: "무슨 기능인지도 모르는데 친구가 쓴다는 이유만으로 내가 뒤처진 것 같음." },
+      { title: "공부법 영상 시청", desc: "공부하기 싫어서 공부법 영상을 보기 시작했는데 영상을 다 보고 나면 공부를 많이 한 느낌이 남." },
+      { title: "새 문제집 구매", desc: "공부가 안 되는 원인을 나에게서 찾다가 문제집 표지를 보고 해결책을 발견함." },
+      { title: "공부 계획 하루 실패", desc: "화요일 계획을 못 지켰는데 이상하게 금요일까지 같이 망한 것으로 처리함." },
+      { title: "진로를 아직 못 정함", desc: "친구가 꿈을 말하는 순간 갑자기 나만 아무 생각 없이 살아온 사람처럼 느껴짐." },
+      { title: "친구의 대회·프로그램 합격", desc: "처음에는 진심으로 축하하다가 잠시 후 조용히 ‘근데 나는 뭐 하고 있지?’가 시작됨." }
+    ];
+
+    const roundNames = ["32강", "16강", "8강", "준결승", "결승"];
+
+    const intro = document.querySelector("#intro");
+    const game = document.querySelector("#game");
+    const winnerPanel = document.querySelector("#winner");
+    const choiceA = document.querySelector("#choiceA");
+    const choiceB = document.querySelector("#choiceB");
+    const progressBar = document.querySelector("#progressBar");
+    const progressTrack = document.querySelector(".progress-track");
+    const roundLabel = document.querySelector("#roundLabel");
+    const matchLabel = document.querySelector("#matchLabel");
+    const championCard = document.querySelector("#championCard");
+
+    let bracket;
+    let round = 0;
+    let match = 0;
+    let completed = 0;
+    let displayedChoices = [];
+    let roundWinners = [];
+
+    function shuffle(items) {
+      const shuffled = [...items];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function cardMarkup(contestant, index) {
+      return `<span class="choice-index">CANDIDATE ${String(index).padStart(2, "0")}</span>
+        <span class="choice-title">${contestant.title}</span>
+        <span class="choice-desc">${contestant.desc}</span>`;
+    }
+
+    function render() {
+      if (round >= bracket.length) {
+        showChampion(bracket[bracket.length - 1][0]);
+        return;
+      }
+
+      const currentMatch = bracket[round].slice(match * 2, match * 2 + 2);
+      displayedChoices = Math.random() < 0.5 ? currentMatch : [...currentMatch].reverse();
+      roundLabel.textContent = roundNames[round];
+      matchLabel.textContent = `${completed + 1} / 31 경기`;
+      const percent = (completed / 31) * 100;
+      progressBar.style.width = `${percent}%`;
+      progressTrack.setAttribute("aria-valuenow", String(completed));
+      choiceA.innerHTML = cardMarkup(displayedChoices[0], completed * 2 + 1);
+      choiceB.innerHTML = cardMarkup(displayedChoices[1], completed * 2 + 2);
+      choiceA.setAttribute("aria-label", `${displayedChoices[0].title}. ${displayedChoices[0].desc}`);
+      choiceB.setAttribute("aria-label", `${displayedChoices[1].title}. ${displayedChoices[1].desc}`);
+    }
+
+    function selectWinner(index) {
+      const winner = displayedChoices[index];
+      roundWinners.push(winner);
+      match++;
+      completed++;
+
+      if (match === bracket[round].length / 2) {
+        if (round === 4) {
+          showChampion(winner);
+          return;
+        }
+        round++;
+        bracket[round] = roundWinners;
+        roundWinners = [];
+        match = 0;
+      }
+      render();
+    }
+
+    function showChampion(champion) {
+      game.classList.add("hidden");
+      winnerPanel.classList.remove("hidden");
+      progressBar.style.width = "100%";
+      progressTrack.setAttribute("aria-valuenow", "31");
+      championCard.innerHTML = `<span class="choice-title">${champion.title}</span>
+        <span class="choice-desc">${champion.desc}</span>`;
+    }
+
+    function start() {
+      bracket = [shuffle(contestants)];
+      round = 0;
+      match = 0;
+      completed = 0;
+      roundWinners = [];
+      intro.classList.add("hidden");
+      winnerPanel.classList.add("hidden");
+      game.classList.remove("hidden");
+      render();
+    }
+
+    choiceA.addEventListener("click", () => selectWinner(0));
+    choiceB.addEventListener("click", () => selectWinner(1));
+    document.querySelector("#startButton").addEventListener("click", start);
+    document.querySelector("#resetButton").addEventListener("click", start);
+    document.querySelector("#playAgainButton").addEventListener("click", start);
+  </script>
+</body>
+</html>
